@@ -17,6 +17,8 @@ dependencies = [
     "prompts>=0.0.1",
     "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.46",
+    "structlog>=25.5.0",
+    "uvloop>=0.22.1",
 ]
 
 [project.scripts]
