@@ -1,9 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "lxp-qna-engine"
 version = "0.1.0"
-description = "Add your description here"
-requires-python = ">=3.12"
-dependencies = [
-    "fastapi>=0.128.5",
-    "uvicorn>=0.40.0",
-]
+description = "QnA engine: RabbitMQ -> LangChain -> Scheduler -> Callback"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+lxp-qna-engine = "lxp_qna_engine.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = { find = { where = ["src"] } }
