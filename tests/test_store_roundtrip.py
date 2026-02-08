@@ -1,5 +1,7 @@
-import pytest
 from datetime import datetime, timezone
+
+import pytest
+
 from lxp_qna_engine.domain.models import Envelope, QnaCreatedPayload, Course, Section, Lecture, Qna
 from lxp_qna_engine.infrastructure.store_sqlite import Store
 

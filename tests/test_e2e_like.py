@@ -1,10 +1,13 @@
-import pytest
 from datetime import datetime, timezone
+
+import httpx
+import pytest
+
 from lxp_qna_engine.cli import process_pending
-from lxp_qna_engine.infrastructure.store_sqlite import Store
 from lxp_qna_engine.config.settings import Settings, Callback, LLM
 from lxp_qna_engine.domain.models import Envelope, QnaCreatedPayload, Course, Section, Lecture, Qna
-import httpx
+from lxp_qna_engine.infrastructure.store_sqlite import Store
+
 
 @pytest.mark.asyncio
 async def test_end_to_end_like(monkeypatch, tmp_path):
@@ -33,8 +36,10 @@ async def test_end_to_end_like(monkeypatch, tmp_path):
     async def fake_post(url, headers=None, json=None):
         class R:
             status_code = 201
+
             def raise_for_status(self):
                 return None
+
         assert url.endswith("/qna-999/answers")
         assert headers.get("Idempotency-Key") == "evt-999"
         assert json["answerText"] == "OK"
@@ -42,7 +47,9 @@ async def test_end_to_end_like(monkeypatch, tmp_path):
 
     class FakeClient:
         async def __aenter__(self): return self
+
         async def __aexit__(self, *a): return False
+
         post = staticmethod(fake_post)
 
     monkeypatch.setattr(httpx, "AsyncClient", lambda timeout: FakeClient())

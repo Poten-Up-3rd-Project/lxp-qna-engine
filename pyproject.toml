@@ -15,6 +15,7 @@ dependencies = [
     "langchain-openai>=1.1.7",
     "orjson>=3.11.7",
     "prompts>=0.0.1",
+    "pytest>=9.0.2",
     "python-dotenv>=1.2.1",
     "sqlalchemy>=2.0.46",
     "structlog>=25.5.0",

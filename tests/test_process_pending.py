@@ -1,9 +1,11 @@
-import pytest
 from datetime import datetime, timezone
+
+import pytest
+
 from lxp_qna_engine.cli import process_pending
 from lxp_qna_engine.config.settings import Settings, LLM, Callback
-from lxp_qna_engine.infrastructure.store_sqlite import Store
 from lxp_qna_engine.domain.models import Envelope, QnaCreatedPayload, Course, Section, Lecture, Qna
+from lxp_qna_engine.infrastructure.store_sqlite import Store
 
 
 def env_one(qid="qna-1", eid="evt-123"):

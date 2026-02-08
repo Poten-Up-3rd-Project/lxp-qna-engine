@@ -1,4 +1,4 @@
-import os, sys
+import sys
 from pathlib import Path
 
 # Ensure `src` is on sys.path for tests without installing the package
