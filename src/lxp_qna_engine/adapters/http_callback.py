@@ -1,8 +1,12 @@
 from __future__ import annotations
+
 from datetime import datetime, timezone
+
 import httpx
-from ..domain.models import Envelope, AnswerOut
+
 from ..config.settings import Callback
+from ..domain.models import Envelope, AnswerOut
+
 
 async def post_callback(cfg: Callback, env: Envelope, answer_text: str) -> None:
     qna_id = env.payload.qna.id

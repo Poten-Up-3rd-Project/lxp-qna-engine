@@ -7,7 +7,17 @@ name = "lxp-qna-engine"
 version = "0.1.0"
 description = "QnA engine: RabbitMQ -> LangChain -> Scheduler -> Callback"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "aio-pika>=9.5.8",
+    "apscheduler>=3.11.2",
+    "langchain>=1.2.9",
+    "langchain-core>=1.2.9",
+    "langchain-openai>=1.1.7",
+    "orjson>=3.11.7",
+    "prompts>=0.0.1",
+    "python-dotenv>=1.2.1",
+    "sqlalchemy>=2.0.46",
+]
 
 [project.scripts]
 lxp-qna-engine = "lxp_qna_engine.cli:main"

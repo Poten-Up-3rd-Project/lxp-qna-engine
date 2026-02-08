@@ -1,11 +1,15 @@
 from __future__ import annotations
+
 import json
 import logging
+
 import aio_pika
 from pydantic import ValidationError
+
 from ..domain.models import Envelope
 
 logger = logging.getLogger(__name__)
+
 
 async def consume_and_buffer(mq_url: str, exchange: str, routing_key: str, queue: str, store):
     connection = await aio_pika.connect_robust(mq_url)

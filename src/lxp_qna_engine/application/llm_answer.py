@@ -1,9 +1,11 @@
 from __future__ import annotations
-from langchain.prompts import ChatPromptTemplate
+
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
-from ..domain.models import Envelope
+
 from ..config.settings import LLM
+from ..domain.models import Envelope
 
 SYSTEM_KO = (
     "너는 강의 QnA 도우미다. 제공된 컨텍스트를 근거로 친절하고 간결하게 한국어로 답하라. "
