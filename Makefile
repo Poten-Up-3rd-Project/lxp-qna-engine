@@ -1,21 +1,25 @@
-PY?=python
-PIP?=pip
 APP?=lxp_qna_engine
 
-.PHONY: venv install run dev fmt lint test
+.PHONY: venv install run dev fmt lint test sync
 
+# Create a uv-managed virtualenv (optional, uv will auto-manage if omitted)
 venv:
-	$(PY) -m venv .venv
-	. .venv/bin/activate
+	uv venv
 
+# Install exact pinned deps from requirements.txt using uv
 install:
-	$(PIP) install -r requirements.txt
+	uv pip sync requirements.txt
 
+# Sync alias
+sync: install
+
+# Run console script via uv
 run:
-	lxp-qna-engine
+	uv run lxp-qna-engine
 
+# Dev server (hot reload)
 dev:
-	uvicorn lxp_qna_engine.cli:app --reload --factory
+	uv run uvicorn $(APP).cli:app --reload --factory
 
 fmt:
 	@echo "(placeholder)"
@@ -23,5 +27,6 @@ fmt:
 lint:
 	@echo "(placeholder)"
 
+# Run tests via uv
 test:
-	$(PY) -m pytest -q
+	uv run -m pytest -q
