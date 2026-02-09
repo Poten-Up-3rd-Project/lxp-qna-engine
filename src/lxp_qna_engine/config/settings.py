@@ -33,6 +33,8 @@ class LLM:
     provider: str = os.getenv("LLM_PROVIDER", "openai").lower()
     model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     api_key: str | None = os.getenv("OPENAI_API_KEY")
+    project: str | None = os.getenv("OPENAI_PROJECT")
+    org_id: str | None = os.getenv("OPENAI_ORG_ID")
     temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.2"))
     max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "512"))
 

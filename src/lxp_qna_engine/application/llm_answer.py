@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
@@ -21,6 +23,16 @@ PROMPT = ChatPromptTemplate.from_messages([
 
 def build_llm(cfg: LLM):
     if cfg.provider == "openai":
+        # Normalize API key to avoid hidden whitespace/CRLF issues
+        api_key = os.getenv("OPENAI_API_KEY")
+        if api_key is not None:
+            trimmed = api_key.strip()
+            if trimmed != api_key:
+                os.environ["OPENAI_API_KEY"] = trimmed  # do not log the value
+        if getattr(cfg, "project", None):
+            os.environ.setdefault("OPENAI_PROJECT", cfg.project)
+        if getattr(cfg, "org_id", None):
+            os.environ.setdefault("OPENAI_ORG_ID", cfg.org_id)
         return ChatOpenAI(model=cfg.model, temperature=cfg.temperature, max_tokens=cfg.max_tokens)
     raise ValueError(f"Unsupported LLM provider: {cfg.provider}")
 

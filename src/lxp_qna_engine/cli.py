@@ -7,6 +7,7 @@ from datetime import datetime
 
 import structlog
 import uvloop
+from fastapi import FastAPI
 from structlog import get_logger
 
 from .adapters.http_callback import post_callback
@@ -84,7 +85,7 @@ def app():  # uvicorn --factory
     uvloop.install()
     loop = asyncio.get_event_loop()
     loop.create_task(main_async())
-    from fastapi import FastAPI
+
     f = FastAPI()
 
     @f.get("/healthz")
