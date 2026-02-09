@@ -4,7 +4,7 @@ import os
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from ..config.settings import LLM
 from ..domain.models import Envelope
@@ -22,19 +22,25 @@ PROMPT = ChatPromptTemplate.from_messages([
 
 
 def build_llm(cfg: LLM):
-    if cfg.provider == "openai":
-        # Normalize API key to avoid hidden whitespace/CRLF issues
-        api_key = os.getenv("OPENAI_API_KEY")
-        if api_key is not None:
-            trimmed = api_key.strip()
-            if trimmed != api_key:
-                os.environ["OPENAI_API_KEY"] = trimmed  # do not log the value
-        if getattr(cfg, "project", None):
-            os.environ.setdefault("OPENAI_PROJECT", cfg.project)
-        if getattr(cfg, "org_id", None):
-            os.environ.setdefault("OPENAI_ORG_ID", cfg.org_id)
-        return ChatOpenAI(model=cfg.model, temperature=cfg.temperature, max_tokens=cfg.max_tokens)
-    raise ValueError(f"Unsupported LLM provider: {cfg.provider}")
+    # Optional: enable LangSmith if key provided
+    ls_key = os.getenv("LANGSMITH_API_KEY")
+    if ls_key:
+        os.environ.setdefault("LANGCHAIN_TRACING_V2", "true")
+        os.environ.setdefault("LANGSMITH_API_KEY", ls_key.strip())
+
+    # Gemini only
+    if cfg.provider not in ("gemini", "google", "google-genai", "googleai"):
+        raise ValueError("Only Gemini provider is supported in this build. Set MODEL_PROVIDER=gemini.")
+
+    gk = cfg.gemini_key or os.getenv("GEMINI_KEY")
+    if not gk:
+        raise ValueError("GEMINI_KEY is not set")
+    os.environ["GOOGLE_API_KEY"] = gk.strip()
+    return ChatGoogleGenerativeAI(
+        model=cfg.model,
+        temperature=cfg.temperature,
+        max_output_tokens=cfg.max_tokens,
+    )
 
 
 def make_chain(llm):

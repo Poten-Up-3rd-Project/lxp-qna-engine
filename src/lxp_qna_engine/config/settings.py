@@ -30,11 +30,10 @@ class Callback:
 
 @dataclass
 class LLM:
-    provider: str = os.getenv("LLM_PROVIDER", "openai").lower()
-    model: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    api_key: str | None = os.getenv("OPENAI_API_KEY")
-    project: str | None = os.getenv("OPENAI_PROJECT")
-    org_id: str | None = os.getenv("OPENAI_ORG_ID")
+    # Unified envs (Gemini only)
+    provider: str = os.getenv("MODEL_PROVIDER", os.getenv("LLM_PROVIDER", "gemini")).lower()
+    model: str = os.getenv("MODEL", "gemini-3-flash-preview")
+    gemini_key: str | None = os.getenv("GEMINI_KEY")
     temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.2"))
     max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", "512"))
 
