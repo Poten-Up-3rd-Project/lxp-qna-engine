@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from dotenv import load_dotenv
 
@@ -39,8 +39,8 @@ class LLM:
 
 @dataclass
 class Settings:
-    messaging: Messaging = Messaging()
-    scheduling: Scheduling = Scheduling()
-    callback: Callback = Callback()
-    llm: LLM = LLM()
+    messaging: Messaging = field(default_factory=Messaging)
+    scheduling: Scheduling = field(default_factory=Scheduling)
+    callback: Callback = field(default_factory=Callback)
+    llm: LLM = field(default_factory=LLM)
     log_level: str = os.getenv("LOG_LEVEL", "INFO")

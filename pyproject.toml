@@ -28,3 +28,8 @@ lxp-qna-engine = "lxp_qna_engine.cli:main"
 [tool.setuptools]
 package-dir = {"" = "src"}
 packages = { find = { where = ["src"] } }
+
+[tool.pytest.ini_options]
+markers = [
+  "asyncio: mark test as asyncio-based",
+]

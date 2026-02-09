@@ -28,5 +28,5 @@ lint:
 	@echo "(placeholder)"
 
 # Run tests via uv
-test:
+test: install
 	uv run -m pytest -q

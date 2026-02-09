@@ -31,14 +31,14 @@ async def test_process_pending_marks_done(monkeypatch, tmp_path):
     store = Store(dsn)
     await store.save_pending(env_one())
 
-    # Mock LLM and callback
-    monkeypatch.setattr("lxp_qna_engine.application.llm_answer.generate_answer", lambda _cfg, _env: "테스트 답변")
+    # Mock LLM and callback (patch at usage site: cli)
+    monkeypatch.setattr("lxp_qna_engine.cli.generate_answer", lambda _cfg, _env: "테스트 답변")
     calls = {"n": 0}
 
     async def fake_post_callback(_cfg, _env, _answer):
         calls["n"] += 1
 
-    monkeypatch.setattr("lxp_qna_engine.adapters.http_callback.post_callback", fake_post_callback)
+    monkeypatch.setattr("lxp_qna_engine.cli.post_callback", fake_post_callback)
 
     await process_pending(store, cfg)
 
