@@ -48,6 +48,26 @@ async def main_async():
     db_dsn = os.getenv("DB_DSN", "sqlite+pysqlite:///./qna.db")
     store = Store(db_dsn)
 
+    # Startup configuration log (no secrets)
+    logger.info(
+        "startup",
+        db_dsn=db_dsn,
+        immediate=cfg.scheduling.immediate,
+        cron_1=cfg.scheduling.cron_1,
+        cron_2=cfg.scheduling.cron_2,
+        timezone=cfg.scheduling.timezone,
+        mq_url=cfg.messaging.url,
+        mq_exchange=cfg.messaging.exchange,
+        mq_routing_key=cfg.messaging.routing_key,
+        mq_queue=cfg.messaging.queue,
+        callback_base=cfg.callback.base,
+        llm_provider=cfg.llm.provider,
+        llm_model=cfg.llm.model,
+        llm_temperature=cfg.llm.temperature,
+        llm_max_tokens=cfg.llm.max_tokens,
+        log_level=cfg.log_level,
+    )
+
     scheduler = build_scheduler(cfg.scheduling)
     add_cron_jobs(scheduler, cfg.scheduling, lambda store: process_pending(store, cfg), store=store)
     scheduler.start()
@@ -66,6 +86,7 @@ async def main_async():
 
     # Optional immediate processing loop
     if cfg.scheduling.immediate:
+        logger.info("immediate_loop.enabled", interval_seconds=5)
         async def immediate_loop():
             while True:
                 await process_pending(store, cfg)

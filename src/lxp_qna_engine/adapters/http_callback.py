@@ -16,9 +16,23 @@ async def post_callback(cfg: Callback, env: Envelope, answer_text: str) -> None:
         base = base + "/api-v1/qna"
     url = f"{base}/{qna_id}/answers"
 
+    # Diagnostics: log outgoing answer length and snippets
+    ans_len = len(answer_text or "")
+    head = (answer_text or "")[:64]
+    tail = (answer_text or "")[-64:]
+    from structlog import get_logger
+    get_logger().info(
+        "callback.outgoing",
+        qnaId=qna_id,
+        eventId=env.eventId,
+        len=ans_len,
+        head=head,
+        tail=tail,
+    )
+
     body = AnswerOut(
         answerText=answer_text,
-        model="openai",
+        model="gemini",
         answeredAt=datetime.now(timezone.utc),
         eventId=env.eventId,
     ).model_dump(mode="json")
