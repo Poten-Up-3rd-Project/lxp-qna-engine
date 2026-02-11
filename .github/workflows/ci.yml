@@ -28,11 +28,11 @@ jobs:
         with:
           enable-cache: true
 
-      - name: Install dependencies (uv sync)
-        run: uv sync --all-extras --dev --frozen
+      - name: Install dependencies (dev)
+        run: make install-dev
 
-      - name: Run tests
-        run: pytest -v
+      - name: Run tests (uv)
+        run: uv run pytest -v
 
   push:
     needs: build
