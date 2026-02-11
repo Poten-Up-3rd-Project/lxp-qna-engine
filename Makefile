@@ -9,11 +9,11 @@ venv:
 # Export locked requirements from uv/pyproject
 # Runtime only (no dev)
 req requirements.txt:
-	uv export --frozen --format requirements-txt -o requirements.txt
+	uv export --frozen --no-editable --no-emit-project --format requirements-txt -o requirements.txt
 
 # Dev + extras (useful for local tooling/CI)
 req-dev requirements-dev.txt:
-	uv export --frozen --format requirements-txt --all-extras --dev -o requirements-dev.txt
+	uv export --frozen --no-editable --no-emit-project --format requirements-txt --all-extras --dev -o requirements-dev.txt
 
 # Update uv.lock from pyproject (if you changed deps)
 lock:
