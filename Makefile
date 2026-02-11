@@ -30,9 +30,10 @@ install-dev:
 # Sync alias (runtime)
 sync: install
 
-# Run console script via uv
+# Run API server via uvicorn (factory app)
+# Use PORT env if provided, default 8000; bind all interfaces for containers
 run:
-	uv run lxp-qna-engine
+	uv run uvicorn $(APP).cli:app --factory --host 0.0.0.0 --port $${PORT:-8000}
 
 # Dev server (hot reload)
 dev:

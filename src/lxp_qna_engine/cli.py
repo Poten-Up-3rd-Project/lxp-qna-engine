@@ -149,9 +149,9 @@ def app():  # uvicorn --factory
         start_time: datetime | None = getattr(request.app.state, "start_time", None)
         return InfoResponse(
             app={
-                "name": "lxp-recomm-engine",
+                "name": "lxp-qna-engine",
                 "version": "0.1.0",
-                "description": "FastAPI Recommendation Engine for LXP",
+                "description": "FastAPI QNA Engine for LXP",
             },
             python=platform.python_version(),
             start_time=start_time.isoformat() if start_time else None,

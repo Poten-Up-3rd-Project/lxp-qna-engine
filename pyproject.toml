@@ -21,6 +21,7 @@ dependencies = [
     "sqlalchemy>=2.0.46",
     "structlog>=25.5.0",
     "uvloop>=0.22.1",
+    "uvicorn>=0.40.0",
 ]
 
 [project.optional-dependencies]
