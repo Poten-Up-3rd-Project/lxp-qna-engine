@@ -3,11 +3,13 @@ from __future__ import annotations
 import asyncio
 import logging
 import os
-from datetime import datetime
+import platform
+from datetime import datetime, timezone
 
 import structlog
 import uvloop
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
 from structlog import get_logger
 
 from .adapters.http_callback import post_callback
@@ -26,6 +28,22 @@ structlog.configure(
     ]
 )
 logger = get_logger()
+
+
+class HealthResponse(BaseModel):
+    """헬스체크 응답 모델."""
+
+    status: str = "UP"
+    version: str = "0.1.0"
+    uptime_seconds: float | None = None
+
+
+class InfoResponse(BaseModel):
+    """애플리케이션 정보 응답 모델 (Spring Actuator /info 대응)."""
+
+    app: dict
+    python: str
+    start_time: str | None = None
 
 
 async def process_pending(store: Store, cfg: Settings):
@@ -87,6 +105,7 @@ async def main_async():
     # Optional immediate processing loop
     if cfg.scheduling.immediate:
         logger.info("immediate_loop.enabled", interval_seconds=5)
+
         async def immediate_loop():
             while True:
                 await process_pending(store, cfg)
@@ -108,9 +127,34 @@ def app():  # uvicorn --factory
     loop.create_task(main_async())
 
     f = FastAPI()
+    # record process start time (timezone-aware)
+    f.state.start_time = datetime.now(timezone.utc)
 
     @f.get("/healthz")
     async def healthz():
         return {"ok": True, "now": datetime.utcnow().isoformat()}
+
+    @f.get("/health", response_model=HealthResponse)
+    async def health_check(request: Request) -> HealthResponse:
+        """헬스체크 엔드포인트 (k8s liveness/readiness probe 대응)."""
+        start_time: datetime | None = getattr(request.app.state, "start_time", None)
+        uptime = None
+        if start_time:
+            uptime = (datetime.now(timezone.utc) - start_time).total_seconds()
+        return HealthResponse(uptime_seconds=uptime)
+
+    @f.get("/info", response_model=InfoResponse)
+    async def app_info(request: Request) -> InfoResponse:
+        """애플리케이션 메타 정보 엔드포인트 (Spring Actuator /info 대응)."""
+        start_time: datetime | None = getattr(request.app.state, "start_time", None)
+        return InfoResponse(
+            app={
+                "name": "lxp-recomm-engine",
+                "version": "0.1.0",
+                "description": "FastAPI Recommendation Engine for LXP",
+            },
+            python=platform.python_version(),
+            start_time=start_time.isoformat() if start_time else None,
+        )
 
     return f
