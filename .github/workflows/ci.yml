@@ -23,14 +23,15 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: pip install .[dev]
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Install dependencies (uv sync)
+        run: uv sync --all-extras --dev --frozen
 
       - name: Run tests
-        env:
-          R2_ENDPOINT_URL: "http://localhost:9000"
-          R2_ACCESS_KEY_ID: "test"
-          R2_SECRET_ACCESS_KEY: "test"
         run: pytest -v
 
   push:
